@@ -1,3 +1,8 @@
+"""
+A calculator module that provides basic arithmetic operations.
+This module contains a Calculator class with static methods for addition,
+subtraction, multiplication, and division operations.
+"""
 from calculator.operations import add, subtract, multiply, divide
 
 class Calculator:
