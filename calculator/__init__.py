@@ -1,29 +1,53 @@
-"""
-This module provides basic arithmetic operations such as addition and subtraction.
-"""
+from decimal import Decimal, InvalidOperation
+from typing import Union
+from calculator.calculation import Calculation, CalculationHistory, Operation
+   
+class Calculator:
+    @staticmethod
+    def convert_to_decimal(value: Union[int, float, str, Decimal]) -> Decimal:
+        """Convert a value to Decimal."""
+        if isinstance(value, Decimal):
+            return value
+        try:
+            return Decimal(str(value))
+        except InvalidOperation as e:
+            raise ValueError(f"Invalid number format: {value}") from e
 
-def add(a, b):
-    """
-    Adds two numbers and returns the result.
+    @staticmethod
+    def _perform_operation(a: Union[int, float, str, Decimal], b: Union[int, float, str, Decimal], operation: Operation) -> Calculation:
+        """Helper function to perform a calculation."""
+        decimal_a = Calculator.convert_to_decimal(a)
+        decimal_b = Calculator.convert_to_decimal(b)
+        
+        if operation == Operation.ADD:
+            result = decimal_a + decimal_b
+        elif operation == Operation.SUBTRACT:
+            result = decimal_a - decimal_b
+        elif operation == Operation.MULTIPLY:
+            result = decimal_a * decimal_b
+        elif operation == Operation.DIVIDE:
+            if decimal_b == Decimal('0'):
+                raise ValueError("Division error: Division by zero is not allowed")
+            result = decimal_a / decimal_b
+        else:
+            raise ValueError("Unsupported operation")
+        
+        calc = Calculation(decimal_a, decimal_b, operation, result)
+        CalculationHistory.add_calculation(calc)
+        return calc
 
-    Parameters:
-    a (int or float): The first number.
-    b (int or float): The second number.
+    @staticmethod
+    def add(a: Union[int, float, str, Decimal], b: Union[int, float, str, Decimal]) -> Calculation:
+        return Calculator._perform_operation(a, b, Operation.ADD)
 
-    Returns:
-    int or float: The sum of a and b.
-    """
-    return a + b
+    @staticmethod
+    def subtract(a: Union[int, float, str, Decimal], b: Union[int, float, str, Decimal]) -> Calculation:
+        return Calculator._perform_operation(a, b, Operation.SUBTRACT)
 
-def subtract(a, b):
-    """
-    Subtracts the second number from the first and returns the result.
+    @staticmethod
+    def multiply(a: Union[int, float, str, Decimal], b: Union[int, float, str, Decimal]) -> Calculation:
+        return Calculator._perform_operation(a, b, Operation.MULTIPLY)
 
-    Parameters:
-    a (int or float): The number to subtract from.
-    b (int or float): The number to subtract.
-
-    Returns:
-    int or float: The result of a - b.
-    """
-    return a - b
+    @staticmethod
+    def divide(a: Union[int, float, str, Decimal], b: Union[int, float, str, Decimal]) -> Calculation:
+        return Calculator._perform_operation(a, b, Operation.DIVIDE)
