@@ -1,18 +1,15 @@
-'''My Calculator Test'''
+import pytest
 from calculator import Calculator
 
-def test_addition():
-    '''Test that addition function works '''    
-    assert Calculator.add(4,3) == 7
+@pytest.mark.parametrize("num1, num2, method, expected", [
+    (5, 3, Calculator.add, 8),
+    (10, 4, Calculator.subtract, 6),
+    (6, 7, Calculator.multiply, 42),
+    (20, 5, Calculator.divide, 4)
+])
+def test_calculator_operations(num1, num2, method, expected):
+    assert method(num1, num2) == expected
 
-def test_subtraction():
-    '''Test that addition function works '''    
-    assert Calculator.subtract(9,3) == 6
-
-def test_multiply():
-    '''Test that addition function works '''    
-    assert Calculator.multiply(3,9) == 27
-
-def test_divide():
-    '''Test that addition function works '''    
-    assert Calculator.divide(10,2) == 5
+def test_calculator_divide_by_zero():
+    with pytest.raises(ZeroDivisionError):
+        Calculator.divide(10, 0)
