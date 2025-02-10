@@ -6,6 +6,7 @@ Unit tests for the Calculator module.
 from decimal import Decimal
 import pytest
 from calculator import Calculator, Operation, CalculationHistory
+from calculator.calculation import Calculation
 
 
 @pytest.fixture
@@ -236,3 +237,13 @@ def test_invalid_inputs(num1, num2, operation):
             Calculator.multiply(num1, num2)
         elif operation == Operation.DIVIDE:
             Calculator.divide(num1, num2)
+
+def test_unsupported_operation():
+    """Test that an unsupported operation raises a ValueError."""
+    with pytest.raises(ValueError, match="Unsupported operation"):
+        Calculator._perform_operation(5, 5, "INVALID_OPERATION")
+
+def test_calculation_str():
+    """Test the string representation of a Calculation instance."""
+    calc = Calculation(Decimal("5"), Decimal("3"), Operation.ADD, Decimal("8"))
+    assert str(calc) == "5 + 3 = 8"
