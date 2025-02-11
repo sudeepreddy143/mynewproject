@@ -1,42 +1,18 @@
-from enum import Enum
-from typing import List, Union
+"""Module containing the Calculation class"""
 from dataclasses import dataclass
 from decimal import Decimal
+from typing import TYPE_CHECKING, Any
 
-class Operation(Enum):
-    ADD = '+'
-    SUBTRACT = '-'
-    MULTIPLY = '*'
-    DIVIDE = '/'
-    
 @dataclass
 class Calculation:
+    """Class for storing calculation details"""
     a: Decimal
     b: Decimal
-    operation: Operation
+    operation: Any
     result: Decimal
 
-    def __str__(self) -> str:
-        return f"{self.a} {self.operation.value} {self.b} = {self.result}"
-
-    def __repr__(self) -> str:
-        return f"Calculation(a=Decimal('{self.a}'), b=Decimal('{self.b}'), operation=Operation.{self.operation.name}, result=Decimal('{self.result}'))"
-
-class CalculationHistory:
-    history: List[Calculation] = []
-
-    @classmethod
-    def add_calculation(cls, calculation: Calculation) -> None:
-        cls.history.append(calculation)
-
-    @classmethod
-    def get_last_calculation(cls) -> Union[Calculation, None]:
-        return cls.history[-1] if cls.history else None
-
-    @classmethod
-    def clear_history(cls) -> None:
-        cls.history.clear()
-
-    @classmethod
-    def get_history(cls) -> List[Calculation]:
-        return cls.history.copy()
+    def __post_init__(self):
+        """Validate operation type after initialization"""
+        from calculator.operations import Operation
+        if not isinstance(self.operation, Operation):
+            raise ValueError("Invalid operation type")
